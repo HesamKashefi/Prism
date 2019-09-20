@@ -126,6 +126,7 @@
     <Compile Include="Common\ObservableObject.cs" />
     <Compile Include="Common\UriParsingHelper.cs" />
     <Compile Include="Events\WeakDelegatesManager.cs" />
+    <Compile Include="Ioc\IContainerRegistryExtensions.cs" />
     <Compile Include="IStartArgs.cs" />
     <Compile Include="Mvvm\ViewModelLocator.cs" />
     <Compile Include="ApplicationBase.cs" />
@@ -233,7 +234,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Services\Dialogs\ReadMe.md" />
+    <None Include="Services\Dialogs\README.md" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

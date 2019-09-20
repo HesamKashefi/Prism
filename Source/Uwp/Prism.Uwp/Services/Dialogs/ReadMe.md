@@ -1,25 +1,4 @@
-﻿# Universal Prism's Interactivity 
-
-This library adds ability to show dialogs from View Models.
-
-## Installation
-
-    Install-Package UniversalPrism.Interactivity -Version 1.0.0-preview6
-
-## Register Services
-
-In the `App.Xaml.cs` :
-
-    protected override void RegisterTypes(IContainerRegistry containerRegistry)
-    {
-		...
-
-        // Register dialog service
-        containerRegistry.AddDialogServices();
-    }
-----
-
-### Show a dialog
+﻿### Show a simple dialog
 
     public class MyViewModel : ViewModelBase
     {

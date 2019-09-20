@@ -28,6 +28,7 @@ namespace Prism.Uwp
     public abstract partial class ApplicationBase : Application
     {
         private static readonly SemaphoreSlim StartSemaphore = new SemaphoreSlim(1, 1);
+        private static int _initialized;
         private IContainerExtension _containerExtension;
 
         public DependencyObject Shell { get; set; }
@@ -42,12 +43,17 @@ namespace Prism.Uwp
         /// </summary>
         public IContainerProvider Container => _containerExtension;
 
+        /// <summary>
+        /// Internal start that occurs in the <see cref="ApplicationBase"/>
+        /// </summary>
+        /// <param name="startArgs">Start Arguments from the platform</param>
         private async Task InternalStartAsync(StartArgs startArgs)
         {
             await StartSemaphore.WaitAsync();
 
             try
             {
+                await CallInitializeOnceAsync();
                 await OnStartAsync(startArgs);
             }
             finally
@@ -63,7 +69,6 @@ namespace Prism.Uwp
         {
             ConfigureViewModelLocator();
             Initialize();
-            OnInitialized();
         }
 
         /// <summary>
@@ -99,7 +104,26 @@ namespace Prism.Uwp
             #endregion
 
             RegisterFrameworkExceptionTypes();
+        }
 
+        /// <summary>
+        /// Calls Initialize method once
+        /// </summary>
+        private async Task CallInitializeOnceAsync()
+        {
+            // once and only once, ever
+            if (Interlocked.Increment(ref _initialized) == 1)
+            {
+                InternalShellInitialization();
+                await OnInitializedAsync();
+            }
+        }
+
+        /// <summary>
+        /// Executes the procedures to create and configure Shell
+        /// </summary>
+        private void InternalShellInitialization()
+        {
             var appShell = CreateShell();
             if (appShell != null)
             {
@@ -123,6 +147,7 @@ namespace Prism.Uwp
         {
             containerRegistry.RegisterInstance(_containerExtension);
             containerRegistry.RegisterSingleton<ILoggerFacade, EmptyLogger>();
+            containerRegistry.RegisterSingleton<IDialogService, DialogService>();
             containerRegistry.RegisterSingleton<RegionAdapterMappings>();
             containerRegistry.RegisterSingleton<IRegionManager, RegionManager>();
             containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
@@ -131,7 +156,6 @@ namespace Prism.Uwp
             containerRegistry.Register<IRegionNavigationJournalEntry, RegionNavigationJournalEntry>();
             containerRegistry.Register<IRegionNavigationJournal, RegionNavigationJournal>();
             containerRegistry.Register<IRegionNavigationService, RegionNavigationService>();
-            containerRegistry.Register<IDialogService, DialogService>();
         }
 
         /// <summary>
@@ -210,8 +234,9 @@ namespace Prism.Uwp
         /// <summary>
         /// Contains actions that should occur last.
         /// </summary>
-        protected virtual void OnInitialized()
+        protected virtual Task OnInitializedAsync()
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>

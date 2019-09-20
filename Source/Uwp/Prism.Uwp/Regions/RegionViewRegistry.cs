@@ -2,6 +2,7 @@ using CommonServiceLocator;
 using Prism.Common;
 using Prism.Uwp.Common;
 using Prism.Uwp.Events;
+using Prism.Uwp.Properties;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
